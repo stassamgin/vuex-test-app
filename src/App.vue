@@ -16,7 +16,7 @@
                 </nav>
               </div>
               <div class="data">
-                <v-btn color="primary">End Day</v-btn>
+                <v-btn color="primary" @click.prevent="endDay">End Day</v-btn>
                 <v-menu offset-y>
                   <v-btn slot="activator">Save & Load</v-btn>
                   <v-list>
@@ -29,7 +29,7 @@
                   </v-list>
                 </v-menu>
                 <div class="counter">
-                  Funds: {{count}}
+                  Funds: {{getTotalCounter}}
                 </div>
               </div>
             </v-layout>
@@ -46,6 +46,16 @@ export default {
     return {
       count: 10000
     }
+  },
+  computed: {
+      getTotalCounter() {
+          return this.$store.getters.getTotalCounter
+      }
+  },
+  methods: {
+      endDay() {
+          this.$store.commit('pseudoRandomPriceGenerator')
+      }
   }
 }
 </script>
