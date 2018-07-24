@@ -1,6 +1,12 @@
 <template>
   <div class="stocks">
-    <stock-component v-for="item in stocks" :data="item" :key="item.id"></stock-component>
+    <stock-component
+            v-for="item in getOffers"
+            :data="item"
+            :key="item.id"
+            :clickEvent="buyOfferedItem"
+            eventType="buy"
+    ></stock-component>
   </div>
 </template>
 
@@ -12,24 +18,16 @@
     components: {
       StockComponent
     },
-    data() {
-      return {
-        stocks: [{
-          id: 1,
-          name: 'BMW',
-          price: 110,
-        },{
-          id: 2,
-          name: 'Mers',
-          price: 10,
-        },{
-          id: 3,
-          name: 'Vaz',
-          price: 2110,
-        }]
+    methods: {
+      buyOfferedItem(eventData) {
+          this.$store.dispatch('buyPortfolioItemAction', eventData)
       }
-    }
-
+    },
+    computed: {
+        getOffers() {
+            return this.$store.getters.getOffers
+        }
+    },
   }
 </script>
 

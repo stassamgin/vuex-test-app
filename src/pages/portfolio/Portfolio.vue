@@ -1,6 +1,12 @@
 <template>
   <div class="portfolio">
-    <stock-component v-for="item in portfolio" :data="item" :key="item.id" color="sell"></stock-component>
+    <stock-component
+            v-for="item in portfolio"
+            :data="item"
+            :key="item.id"
+            :clickEvent="sellItems"
+            eventType="sell"
+    ></stock-component>
   </div>
 </template>
 
@@ -14,16 +20,21 @@
     },
     data() {
       return {
-        portfolio: [{
-          id: 1,
-          name: 'BMW',
-          price: 110,
-        },{
-          id: 2,
-          name: 'Mers',
-          price: 10,
-        }]
+        portfolio: []
       }
+    },
+    methods: {
+        sellItems(eventData) {
+            this.$store.dispatch('sellPortfolioItemAction', eventData)
+        }
+    },
+    computed: {
+        getPortfolio() {
+            this.portfolio = this.$store.getters.getPortfolio
+        }
+    },
+    created() {
+        this.portfolio = this.$store.getters.getPortfolio
     }
 
   }

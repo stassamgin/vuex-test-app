@@ -1,12 +1,17 @@
 <template>
   <v-layout>
-    <h1>home page</h1>
+    <appDashboard />
   </v-layout>
 </template>
 
 <script>
+  import Dashboard from './dashboard/Dashboard'
+
   export default {
     name: "home",
+    components: {
+      appDashboard: Dashboard,
+    }
   }
 </script>
 

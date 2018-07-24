@@ -8,42 +8,44 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    total: 10000,
-    offers: {
-      'BWV': 110,
-      'Google': 200,
-      'Apple': 250,
-      'Twitter': 10
-    }
+    total: 0,
+    inputField: '',
   },
   getters: {
       getTotalCounter(state) {
           const total = String(state.total);
           return `$${total.slice(0,-3)}.${total.slice(-3)}`;
-      }
+      },
+
+    getInput(state) {
+        return state.inputField;
+    }
   },
   mutations: {
-      setTotalCounter(state, payload) {
-          const { price, count, type} = payload;
-          if (type === 'sell') {
+      setTotalCounter(state, { price, count, eventType }) {
+          if (eventType === 'sell') {
             state.total += Number(price) * Number(count);
-          }
-          if (type === 'buy') {
+          } else if (eventType === 'buy') {
             state.total -= Number(price) * Number(count);
+          } else {
+            state.total = Number(price);
           }
       },
-      pseudoRandomPriceGenerator(state) {
-        const prices = state.offers;
-        for (let key in prices) {
-          const value = Math.floor(Math.random() * 10);
-          Math.random() > 0.5 ? prices[key] += value : prices[key] -= value;
-          if(prices[key] < 0) prices[key] = 0;
-        }
 
+      getInputMutate(state, value) {
+        state.inputField = value;
       }
   },
-  actions: {  },
+  actions: {
+      getStartTotalValue({commit}) {
+          Vue.http.get('total.json')
+              .then(resp => resp.json())
+              .then(total => {
+                  commit('setTotalCounter', {price: total})
+              } )
+      }
+  },
   modules: {
-    portfolio, stocks
+    stocks, portfolio
   }
 })

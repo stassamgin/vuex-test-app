@@ -40,22 +40,25 @@
 </template>
 
 <script>
+
+import { mapGetters, mapActions } from 'vuex';
+
+
 export default {
   name: 'app',
-  data () {
-    return {
-      count: 10000
-    }
-  },
   computed: {
-      getTotalCounter() {
-          return this.$store.getters.getTotalCounter
-      }
+    ...mapGetters([
+      'getTotalCounter',
+    ]),
   },
   methods: {
-      endDay() {
-          this.$store.commit('pseudoRandomPriceGenerator')
-      }
+    ...mapActions({
+      endDay: 'randomPriseGenerateAction',
+    }),
+  },
+  created() {
+    this.$store.dispatch('getStartTotalValue')
+    this.$store.dispatch('getStartStocksValue')
   }
 }
 </script>
