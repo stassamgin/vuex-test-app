@@ -1,16 +1,19 @@
 <template>
   <v-layout>
-    <appDashboard />
+    <appStocks />
   </v-layout>
 </template>
 
 <script>
-  import Dashboard from './dashboard/Dashboard'
+  import Stocks from '@/apps/stocks/Stocks'
 
   export default {
     name: "home",
+    metaInfo: {
+      title: 'v-stock - Home',
+    },
     components: {
-      appDashboard: Dashboard,
+      appStocks: Stocks,
     }
   }
 </script>

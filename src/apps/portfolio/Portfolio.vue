@@ -11,10 +11,13 @@
 </template>
 
 <script>
-  import StockComponent from '../stockComponent/StockComponent'
+  import StockComponent from '@/components/baseStockComponent';
 
   export default {
     name: "portfolio",
+    metaInfo: {
+      title: 'v-stock - Portfolio',
+    },
     components: {
       StockComponent
     },
@@ -29,13 +32,13 @@
         }
     },
     computed: {
-        getPortfolio() {
-            this.portfolio = this.$store.getters.getPortfolio
-        }
+        // getPortfolio() {
+        //     this.portfolio = this.$store.getters.getPortfolio
+        // }
     },
-    created() {
-        this.portfolio = this.$store.getters.getPortfolio
-    }
+    // created() {
+    //     this.portfolio = this.$store.getters.getPortfolio
+    // }
 
   }
 </script>

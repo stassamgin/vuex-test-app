@@ -1,40 +1,11 @@
 <template>
   <div id="app">
-      <v-app>
-        <v-toolbar app>
-            <v-layout class="navbar" justify-space-between align-center>
-              <div class="logo-block">
-                <router-link tag="div" to="/">
-                  <div class="logo">
-                    <img src="./assets/logo.png">
-                    <span>- stock</span>
-                  </div>
-                </router-link>
-                <nav class="nav">
-                  <router-link tag="v-btn" to="/portfolio">Portfolio</router-link>
-                  <router-link tag="v-btn" to="/stocks">Stocks</router-link>
-                </nav>
-              </div>
-              <div class="data">
-                <v-btn color="primary" @click.prevent="endDay">End Day</v-btn>
-                <v-menu offset-y>
-                  <v-btn slot="activator">Save & Load</v-btn>
-                  <v-list>
-                    <v-list-tile @click="">
-                      <v-list-tile-title>Save Data</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile @click="">
-                      <v-list-tile-title>Load Data</v-list-tile-title>
-                    </v-list-tile>
-                  </v-list>
-                </v-menu>
-                <div class="counter">
-                  Funds: {{getTotalCounter}}
-                </div>
-              </div>
-            </v-layout>
-        </v-toolbar>
-        <router-view></router-view>
+      <v-app app>
+        <base-navbar app />
+        <v-container text-xs-center app>
+          <router-view />
+        </v-container>
+        <app-login v-if="isShowModal" />
       </v-app>
   </div>
 </template>
@@ -42,13 +13,20 @@
 <script>
 
 import { mapGetters, mapActions } from 'vuex';
+import baseNavbar from '@/components/baseNavbar'
+import Login from '@/apps/auth/Login'
 
 
 export default {
   name: 'app',
+  components: {
+    baseNavbar,
+    appLogin: Login,
+  },
   computed: {
     ...mapGetters([
       'getTotalCounter',
+      'isShowModal'
     ]),
   },
   methods: {

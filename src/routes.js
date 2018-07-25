@@ -1,7 +1,7 @@
 import VueRouter from 'vue-router'
-import Home from './pages/Home'
-import Portfolio from './pages/portfolio/Portfolio'
-import Stocks from './pages/stocks/Stocks'
+import Home from '@/apps/Home'
+import Portfolio from '@/apps/portfolio/Portfolio'
+// import History from '@/apps/history/History'
 
 
 
@@ -17,9 +17,9 @@ routes: [
     name: 'portfolio'
   },
   {
-    path: '/stocks',
-    component: Stocks,
-    name: 'stocks'
+    path: '/history',
+    // component: History,
+    name: 'history'
   }
 ],
   mode: 'history'

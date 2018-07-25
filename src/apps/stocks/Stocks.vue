@@ -11,7 +11,7 @@
 </template>
 
 <script>
-  import StockComponent from '../stockComponent/StockComponent'
+  import StockComponent from '@/components/baseStockComponent';
 
   export default {
     name: "stocks",
