@@ -1,32 +1,24 @@
 <template>
   <div class="stocks">
-    <stock-component
+    <stock-item
             v-for="item in getOffers"
             :data="item"
             :key="item.id"
-            :clickEvent="buyOfferedItem"
-            eventType="buy"
-    ></stock-component>
+    ></stock-item>
   </div>
 </template>
 
 <script>
-  import StockComponent from '@/components/baseStockComponent';
+  import { mapGetters } from 'vuex';
+  import StockItem from './stockItem';
 
   export default {
     name: "stocks",
     components: {
-      StockComponent
-    },
-    methods: {
-      buyOfferedItem(eventData) {
-          this.$store.dispatch('buyPortfolioItemAction', eventData)
-      }
+      StockItem
     },
     computed: {
-        getOffers() {
-            return this.$store.getters.getOffers
-        }
+      ...mapGetters(['getOffers']),
     },
   }
 </script>

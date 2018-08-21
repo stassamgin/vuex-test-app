@@ -9,7 +9,7 @@
           </div>
         </router-link>
         <v-btn
-          class="ml-5"
+          class="ml-4"
           color="secondary"
           left
           @click.prevent="endDay"
@@ -41,6 +41,12 @@
             </v-list-tile>
           </v-list>
         </v-menu>
+        <v-btn
+            @click="LOGOUT_USER"
+            color="primary"          >
+          <v-icon left>input</v-icon>
+          Logout
+        </v-btn>
         <div class="counter">
           Funds: 54
         </div>
@@ -51,7 +57,7 @@
 
 <script>
   import { mapActions, mapGetters, mapMutations } from 'vuex';
-
+  import { LOGOUT_USER } from '@/apps/auth/store/types';
   import {
     SHOW_MODAL
   } from '@/store/types';
@@ -65,11 +71,56 @@
       ...mapActions({
         endDay: 'randomPriseGenerateAction',
       }),
-      ...mapMutations([SHOW_MODAL,])
+      ...mapMutations([SHOW_MODAL, LOGOUT_USER])
     },
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+.navbar {
+  padding: 0 30px;
+  min-width: 100px;
+}
+
+.counter {
+  margin-left: 30px;
+  color: #666;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.nav {
+  margin-left: 10px;
+}
+
+.data {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.logo {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  color: #999;
+  font-weight: bold;
+
+  img {
+    max-height: 100%;
+  }
+
+  span {
+    transform: translateX(-4px);
+    font-size: 18px;
+  }
+
+  &-block {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+}
 
 </style>

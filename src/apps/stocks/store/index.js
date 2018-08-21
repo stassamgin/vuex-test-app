@@ -1,5 +1,4 @@
 import { PRICE_GENERATOR } from './types';
-import Vue from 'vue';
 import 'babel-polyfill';
 
 import * as fb from 'firebase';
@@ -44,7 +43,6 @@ export const actions = {
   async getStartStocksValue({commit}) {
     try {
       const offers = await fb.database().ref('offers').once('value');
-      console.log('fromServer22', offers.val());
       commit(PRICE_GENERATOR, offers.val())
     } catch (error) {
       console.log('error', error)

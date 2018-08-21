@@ -1,25 +1,43 @@
 import {
   BUE_PORTFOLIO_ITEM,
+  BUE_PORTFOLIO_EXIST_ITEM,
+  BUE_PORTFOLIO_CREATE_ITEM,
   SELL_PORTFOLIO_ITEM,
   SET_PORTFOLIO_STOCK,
   SET_PORTFOLIO_HISTORY,
   SET_PORTFOLIO_COUNT,
   FETCH_PORTFOLIO,
-} from './types';
+  SET_PORTFOLIO, LOGIN_USER,
+} from '@/apps/auth/store/types';
+import {SET_LOAD, SHOW_MODAL} from "@/store/types";
+import * as fb from "firebase";
 
 export const state = {
   stock: [],
   history: [],
-  count: null,
+  count: 10000,
 };
 
 export const getters = {
-  getPortfolio(state) {
+  portfolioStock(state) {
     return state.stock
-  }
+  },
+
+  portfolioCount(state) {
+    return state.count
+  },
+
+  portfolioHistory(state) {
+    return state.history
+  },
 };
 
 export const mutations =  {
+
+  BUE_PORTFOLIO_ITEM(state, {count, id, price}) {
+
+  },
+
   'SET_PORTFOLIO_ITEM' (state, {count, eventType, name, price}) {
     if (eventType === 'sell') {
       const item = state.stock.find(item => item.name === name)
@@ -27,29 +45,50 @@ export const mutations =  {
       if (item.count < 1) state.stock.splice(state.stock.indexOf(item), 1)
     }
     if (eventType === 'buy') {
-      if(state.stock.some(item => item.name === name)) {
-        const currentItem = state.stock.find(item => item.name === name);
-        currentItem.price = Math.round(
-          (currentItem.price * currentItem.count + Number(price) * Number(count))/(currentItem.count + Number(count)))
-        currentItem.count += Number(count)
-      } else {
-        state.stock.push({
-          id: state.stock.length === 0 ? 0 : state.stock[state.stock.length - 1].id + 1,
-          name,
-          count: Number(count),
-          price: Number(price)
-        })
-      }
+
     }
   }
 };
 
 export const actions = {
-  buyPortfolioItemAction({commit, state, rootState}, {count, eventType, data:{name, price}}) {
-    if(Number(price) * Number(count) > rootState.total) return
-    commit('setTotalCounter', {price, count, eventType})
-    commit('SET_PORTFOLIO_ITEM', {count, eventType, name, price})
+  async BUE_PORTFOLIO_ITEM({commit, state, rootState}, {count, data:{id, price}}) {
+
+    commit(SET_LOAD, true)
+
+    const currentItem = state.stock.find(item => item.id === id);
+    if(currentItem) {
+      const newItem = Object.assign({}, currentItem);
+      newItem.price = Math.round(
+        (currentItem.price * currentItem.count + Number(price) * Number(count))/(currentItem.count + Number(count)))
+      newItem.count += Number(count)
+
+      // await fb.database().ref('offers').set(prices);
+      commit(SET_LOAD, false)
+    } else {
+
+      try {
+        const request = await fb.database().ref(`users/${rootState.auth.uid}/stock`).push({
+          id,
+          name,
+          count: Number(count),
+          price: Number(price)
+        });
+        commit(SET_LOAD, false)
+
+        console.log('request-', request)
+
+        // commit(SHOW_MODAL, false)
+        // commit(LOGIN_USER, request.user.uid)
+        //commit(FETCH_PORTFOLIO, payload)
+      } catch (error) {
+        commit(SET_LOAD, false)
+
+        console.log(error)
+        throw error
+      }
+    }
   },
+
   sellPortfolioItemAction({commit, state, rootState}, {count, eventType, data:{name}}) {
 
     if(Number(count) > state.stock.find(item => item.name === name).count) return

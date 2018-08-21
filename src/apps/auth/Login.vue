@@ -94,7 +94,7 @@ import {
         email: null,
         emailRules: [
           v => !!v || 'E-mail is required',
-          v => /.+@.+/.test(v) || 'E-mail must be valid'
+          v => /.+@.+/.test(v) || 'E-mail must be valid',
         ],
         password: null,
         passwordRules: [
@@ -141,8 +141,24 @@ import {
       },
 
       finishForm() {
-        [CREATE_USER](this.email, this.password)
-        console.log('TYTYTTY')
+        const {email, password, createUser} = this;
+
+        if(createUser) {
+          this.CREATE_USER({email, password})
+            .then(() => {
+                this.cancelForm()
+            })
+            .catch((e) => {
+                console.log(e);
+                this.valid = false;
+            })
+        }
+
+        this.LOGIN_USER({email, password})
+            .then(() => {
+                this.cancelForm()
+            })
+            .catch((e) => console.log(e))
       }
     },
   }

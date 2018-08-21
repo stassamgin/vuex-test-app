@@ -21,10 +21,6 @@ export default new Vuex.Store({
     loading: false,
   },
   getters: {
-    getTotalCounter(state) {
-        const total = String(state.total);
-        return `$${total.slice(0,-3)}.${total.slice(-3)}`;
-    },
     getInput(state) {
         return state.inputField;
     },

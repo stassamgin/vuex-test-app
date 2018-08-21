@@ -3,4 +3,5 @@ export const SET_LOAD = 'SET_LOAD';
 
 export default {
   SHOW_MODAL,
+  SET_LOAD,
 }

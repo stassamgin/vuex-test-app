@@ -49,49 +49,4 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
-
-.navbar {
-  padding: 0 40px;
-}
-
-.counter {
-  margin-right: 20px;
-  margin-left: 50px;
-  color: #666;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.nav {
-  margin-left: 50px;
-}
-
-.data {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.logo {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  color: #999;
-  font-weight: bold;
-
-  img {
-    max-height: 100%;
-  }
-
-  span {
-    transform: translateX(-4px);
-    font-size: 18px;
-  }
-
-  &-block {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
-}
 </style>

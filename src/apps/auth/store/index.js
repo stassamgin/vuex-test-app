@@ -5,7 +5,7 @@ import {
   LOGIN_USER,
   LOGOUT_USER,
 } from './types';
-import {PRICE_GENERATOR} from "@/apps/stocks/store/types";
+import {SET_LOAD, SHOW_MODAL} from "@/store/types";
 
 export const state = {
   isAuth: null,
@@ -29,7 +29,7 @@ export const mutations =  {
     state.isAuth = true;
   },
 
-  [LOGOUT_USER](state, payload) {
+  [LOGOUT_USER](state) {
     state.uid = null;
     state.isAuth = null;
   },
@@ -37,24 +37,36 @@ export const mutations =  {
 
 export const actions = {
   async [CREATE_USER]({commit}, {email, password}) {
+    commit(SET_LOAD, true)
 
     try {
-      const test = fb.auth().createUserWithEmailAndPassword(email, password)
-      console.log('test', test);
+      const request = await fb.auth().createUserWithEmailAndPassword(email, password)
+        commit(SET_LOAD, false)
+        commit(SHOW_MODAL, false)
+        //TODO: logic of add count to new user
+        commit(LOGIN_USER, request.user.uid)
     } catch (error) {
-      console.log('error', error)
+      commit(SET_LOAD, false)
       throw error
     }
-
   },
 
-  [LOGIN_USER]({commit}, payload) {
+  async [LOGIN_USER]({commit}, {email, password}) {
+    commit(SET_LOAD, true)
 
-    // commit(LOGIN_USER, payload)
-    // commit(FETCH_PORTFOLIO, payload)
+    try {
+        const request = await fb.auth().signInWithEmailAndPassword(email, password)
+        commit(SET_LOAD, false)
+        commit(SHOW_MODAL, false)
+        commit(LOGIN_USER, request.user.uid)
+        //commit(FETCH_PORTFOLIO, payload)
+    } catch (error) {
+        commit(SET_LOAD, false)
+        throw error
+    }
   },
 
-  [LOGOUT_USER]({commit}, payload) {
+  [LOGOUT_USER]({commit}) {
     commit(LOGOUT_USER)
   },
 };
