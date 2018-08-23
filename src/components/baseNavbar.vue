@@ -47,8 +47,8 @@
           <v-icon left>input</v-icon>
           Logout
         </v-btn>
-        <div class="counter">
-          Funds: 54
+        <div v-if="portfolioCount" class="counter">
+          Funds: {{portfolioCount}} $
         </div>
       </div>
     </v-layout>
@@ -65,7 +65,12 @@
   export default {
     name: "baseNavbar",
     computed: {
-      ...mapGetters(['isAuth']),
+      ...mapGetters(['isAuth', 'portfolioCount']),
+    },
+    watch: {
+      portfolioCount(val) {
+        console.log('portfolioCount--', val);
+      }
     },
     methods: {
       ...mapActions({

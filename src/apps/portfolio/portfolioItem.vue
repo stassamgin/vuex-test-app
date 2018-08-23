@@ -1,60 +1,62 @@
 <template>
-    <v-layout column class="item">
-        <v-toolbar color="secondary" dark>
-            <v-toolbar-title>
-                {{data.name}}
-                <span class="price">
-                  (Price: {{data.buePrice}} |
+  <v-layout column class="item">
+    <v-toolbar color="secondary" dark>
+      <v-toolbar-title>
+        {{data.name}}
+        <span class="price">
+                  (Bue price: {{data.buePrice}} |
                 </span>
-                <span class="price">
+        <span class="price">
                   Current price: {{data.currentPrice}} |
                 </span>
-                <span class="count">
+        <span class="count">
                   Count: {{data.count}} )
               </span>
-            </v-toolbar-title>
-        </v-toolbar>
-        <v-card>
-            <div class="input">
-                <v-text-field
-                        v-model.number="count"
-                        type="number"
-                        label="Quantity"
-                ></v-text-field>
-            </div>
-            <v-card-actions class="action">
-                <v-btn
-                        color="secondary"
-                        :disabled="count > data.count"
-                        @click.number="handleClick"
-                > Sell Now
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-layout>
+      </v-toolbar-title>
+    </v-toolbar>
+    <v-card>
+      <div class="input">
+        <v-text-field
+          v-model.number="count"
+          type="number"
+          label="Quantity"
+        ></v-text-field>
+      </div>
+      <v-card-actions class="action">
+        <v-btn
+          color="secondary"
+          :disabled="count > data.count"
+          @click.number="handleClick"
+        > Sell Now
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-layout>
 </template>
 
 <script>
-    export default {
-        name: "portfolio-item",
-        props: {
-            data: Object,
-        },
-        data() {
-            return {
-                count: ''
-            }
-        },
-        methods: {
-            handleClick() {
-                this.clickEvent({
-                    count: this.count,
-                    data: this.data
-                })
-                this.count = ''
-            }
-        }
+
+  import {
+    SELL_PORTFOLIO_ITEM,
+  } from '@/apps/portfolio/store/types';
+
+  export default {
+    name: "portfolio-item",
+    props: {
+      data: Object,
+    },
+    data() {
+      return {
+        count: ''
+      }
+    },
+    methods: {
+      handleClick() {
+        this.$store.dispatch(SELL_PORTFOLIO_ITEM, {data: this.data, sellItemCount: this.count} );
+        this.count = ''
+      }
     }
+  }
 </script>
 
 <style scoped>

@@ -37,7 +37,7 @@ const portfolioArrayGenerator = (totalItemStock, portfolioStock) => {
 export const state = {
   stock: [],
   history: [],
-  count: 10000,
+  count: null,
 };
 
 export const getters = {
@@ -55,18 +55,24 @@ export const getters = {
 };
 
 export const mutations =  {
+  [SET_PORTFOLIO_STOCK](state, stock) {
+    state.stock = stock
+  },
+
+  [SET_PORTFOLIO_HISTORY](state, history) {
+    console.log('history--', history)
+  },
+
+  [SET_PORTFOLIO_COUNT](state, count) {
+    state.count = count
+  },
 
   [BUE_PORTFOLIO_ITEM](state, {count, id, price}) {
 
   },
-  [SET_PORTFOLIO_STOCK](state, stock) {
-    state.stock = stock
-  },
-  [SET_PORTFOLIO_HISTORY](state, history) {
-    console.log('history--', history)
-  },
-  [SET_PORTFOLIO_COUNT](state, count) {
-    console.log('count--', count)
+
+  [SELL_PORTFOLIO_ITEM](state, {item, sellItemCount}) {
+
   },
 
   'SET_PORTFOLIO_ITEM' (state, {count, eventType, name, price}) {
@@ -100,11 +106,19 @@ export const actions = {
   },
 
 
-  async BUE_PORTFOLIO_ITEM({commit, state, rootState}, {count, data:{id, price}}) {
+  async [BUE_PORTFOLIO_ITEM]({commit, state, rootState}, {count, data:{id}}) {
 
     commit(SET_LOAD, true)
+    const findItemFunction = (stock, id) => {
+      for (item in stock) {
+        if (item => item.id === id) return item;
+      }
+      return null;
+    };
+    const currentItem = findItemFunction(state.stock, id);
 
-    const currentItem = state.stock.find(item => item.id === id);
+    console.log('currentItem', currentItem)
+
     if(currentItem) {
       const newItem = Object.assign({}, currentItem);
       newItem.price = Math.round(
@@ -122,12 +136,6 @@ export const actions = {
           price: Number(price)
         });
         commit(SET_LOAD, false)
-
-        console.log('request-', request)
-
-        // commit(SHOW_MODAL, false)
-        // commit(LOGIN_USER, request.user.uid)
-        //commit(FETCH_PORTFOLIO, payload)
       } catch (error) {
         commit(SET_LOAD, false)
 
@@ -137,7 +145,7 @@ export const actions = {
     }
   },
 
-  sellPortfolioItemAction({commit, state, rootState}, {count, eventType, data:{name}}) {
+  [SELL_PORTFOLIO_ITEM]({commit, state, rootState}, {item, sellItemCount}) {
 
     if(Number(count) > state.stock.find(item => item.name === name).count) return
     const currentPrice = rootState.stocks.offers.find(item => item.name === name).price
