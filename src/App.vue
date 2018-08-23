@@ -12,10 +12,10 @@
 
 <script>
 
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 import baseNavbar from '@/components/baseNavbar'
 import Login from '@/apps/auth/Login'
-
+import { FETCH_PORTFOLIO } from '@/apps/portfolio/store/types'
 
 export default {
   name: 'app',
@@ -25,17 +25,17 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getTotalCounter',
+      'isAuth',
       'isShowModal'
     ]),
   },
-  methods: {
-    ...mapActions({
-      endDay: 'randomPriseGenerateAction',
-    }),
+  watch: {
+    isAuth() {
+      if(this.isAuth) this.$store.dispatch(FETCH_PORTFOLIO)
+    },
   },
   created() {
-    this.$store.dispatch('getStartTotalValue')
+    if(this.isAuth) this.$store.dispatch(FETCH_PORTFOLIO)
     this.$store.dispatch('getStartStocksValue')
   }
 }

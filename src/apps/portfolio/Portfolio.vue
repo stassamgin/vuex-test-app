@@ -1,17 +1,16 @@
 <template>
   <div class="portfolio">
-    <stock-component
-            v-for="item in portfolio"
+    <portfolio-item
+            v-for="item in portfolioStock"
             :data="item"
             :key="item.id"
-            :clickEvent="sellItems"
-            eventType="sell"
-    ></stock-component>
+    ></portfolio-item>
   </div>
 </template>
 
 <script>
-  import StockComponent from '@/components/baseStockComponent';
+  import { mapGetters } from 'vuex';
+  import PortfolioItem from './portfolioItem';
 
   export default {
     name: "portfolio",
@@ -19,36 +18,18 @@
       title: 'v-stock - Portfolio',
     },
     components: {
-      StockComponent
-    },
-    data() {
-      return {
-        portfolio: []
-      }
-    },
-    methods: {
-        sellItems(eventData) {
-            this.$store.dispatch('sellPortfolioItemAction', eventData)
-        }
+      PortfolioItem
     },
     computed: {
-        // getPortfolio() {
-        //     this.portfolio = this.$store.getters.getPortfolio
-        // }
+      ...mapGetters(['portfolioStock']),
     },
-    // created() {
-    //     this.portfolio = this.$store.getters.getPortfolio
-    // }
-
   }
 </script>
 
 <style scoped>
-
   .portfolio {
     padding: 30px 30px;
     display: flex;
     flex-flow: row wrap;
   }
-
 </style>

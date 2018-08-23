@@ -42,7 +42,7 @@
           </v-list>
         </v-menu>
         <v-btn
-            @click="LOGOUT_USER"
+            @click="logoutHandler"
             color="primary"          >
           <v-icon left>input</v-icon>
           Logout
@@ -71,7 +71,11 @@
       ...mapActions({
         endDay: 'randomPriseGenerateAction',
       }),
-      ...mapMutations([SHOW_MODAL, LOGOUT_USER])
+      ...mapMutations([SHOW_MODAL, LOGOUT_USER]),
+      logoutHandler() {
+        this.$router.push('/');
+        this.LOGOUT_USER();
+      },
     },
   }
 </script>

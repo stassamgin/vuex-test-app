@@ -41,7 +41,8 @@ new Vue({
       projectId: "vue-test-project-d0932",
       storageBucket: "vue-test-project-d0932.appspot.com",
       messagingSenderId: "655706965811"
-    });
+    })
+
   }
 
 })

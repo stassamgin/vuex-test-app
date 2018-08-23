@@ -1,29 +1,33 @@
 <template>
     <v-layout column class="item">
-        <v-toolbar :color="getColor" dark>
+        <v-toolbar color="secondary" dark>
             <v-toolbar-title>
                 {{data.name}}
                 <span class="price">
-                  {{data.price}}
+                  (Price: {{data.buePrice}} |
                 </span>
-                <span class="count" v-if="data.count">
-                  {{data.count}}
+                <span class="price">
+                  Current price: {{data.currentPrice}} |
+                </span>
+                <span class="count">
+                  Count: {{data.count}} )
               </span>
             </v-toolbar-title>
         </v-toolbar>
         <v-card>
             <div class="input">
                 <v-text-field
-                        v-model="count"
+                        v-model.number="count"
+                        type="number"
                         label="Quantity"
                 ></v-text-field>
             </div>
             <v-card-actions class="action">
                 <v-btn
-                        :color="getColor"
-                        dark
+                        color="secondary"
+                        :disabled="count > data.count"
                         @click.number="handleClick"
-                > {{ (this.eventType === 'sell') ? 'Sell Now' : 'Buy now' }}
+                > Sell Now
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -32,24 +36,13 @@
 
 <script>
     export default {
-        name: "stock-component",
+        name: "portfolio-item",
         props: {
             data: Object,
-            eventType: String,
-            clickEvent: Function
         },
         data() {
             return {
                 count: ''
-            }
-        },
-        computed: {
-            getColor() {
-                if (this.eventType === 'sell') {
-                    return 'red darken-1'
-                } else {
-                    return 'cyan darken-1'
-                }
             }
         },
         methods: {
@@ -87,26 +80,8 @@
     font-size: 14px;
   }
 
-  .count::before {
-    content: '(Count: ';
-    margin-left: 5px;
-  }
-
-  .count::after {
-    content: ')';
-  }
-
   .price {
     font-size: 14px;
-  }
-
-  .price::before {
-    content: '(Price: ';
-    margin-left: 5px;
-  }
-
-  .price::after {
-    content: ')';
   }
 
 </style>

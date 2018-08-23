@@ -7,15 +7,16 @@ import {
 } from './types';
 import {SET_LOAD, SHOW_MODAL} from "@/store/types";
 
+export const lsToken = 'access-token';
+
 export const state = {
-  isAuth: null,
-  uid: null,
+  uid: localStorage.getItem(lsToken) || null,
 };
 
 export const getters = {
 
   isAuth(state) {
-    return state.isAuth;
+    return !!state.uid;
   },
 
   userId(state) {
@@ -26,12 +27,12 @@ export const getters = {
 export const mutations =  {
   [LOGIN_USER](state, payload) {
     state.uid = payload;
-    state.isAuth = true;
+    localStorage.setItem(lsToken, payload);
   },
 
   [LOGOUT_USER](state) {
     state.uid = null;
-    state.isAuth = null;
+    localStorage.removeItem(lsToken);
   },
 };
 

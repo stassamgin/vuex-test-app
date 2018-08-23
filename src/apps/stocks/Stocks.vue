@@ -14,6 +14,9 @@
 
   export default {
     name: "stocks",
+    metaInfo: {
+      title: 'v-stock - Home',
+    },
     components: {
       StockItem
     },
