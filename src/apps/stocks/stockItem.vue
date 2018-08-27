@@ -59,8 +59,7 @@
     },
     methods: {
       handleClick() {
-        const { count, id } = this.data;
-        this.$store.dispatch(BUE_PORTFOLIO_ITEM, { count, id })
+        this.$store.dispatch(BUE_PORTFOLIO_ITEM, { count: this.itemCounter, data: this.data })
         this.itemCounter = ''
       }
     }

@@ -3,6 +3,7 @@ import {
   BUE_PORTFOLIO_EXIST_ITEM,
   BUE_PORTFOLIO_CREATE_ITEM,
   SELL_PORTFOLIO_ITEM,
+  REMOVE_PORTFOLIO_ITEM,
   SET_PORTFOLIO_STOCK, //
   SET_PORTFOLIO_HISTORY, //
   SET_PORTFOLIO_COUNT, //
@@ -31,6 +32,25 @@ const portfolioArrayGenerator = (totalItemStock, portfolioStock) => {
   })
 
   return newPortfolioArray;
+};
+
+const createHistoryBuyItem = function ({id, name, price}, buyCount) {
+  this.side = 'buy';
+  this.date = JSON.stringify(new Date());
+  this.id = id;
+  this.name = name;
+  this.price = price;
+  this.count = buyCount;
+}
+
+const createHistorySellItem = function ({id, name, currentPrice, buePrice}, sellCount) {
+  this.side = 'sell';
+  this.date = JSON.stringify(new Date());
+  this.id = id;
+  this.name = name;
+  this.buePrice = buePrice;
+  this.sellPrice = currentPrice;
+  this.count = sellCount;
 }
 
 
@@ -42,6 +62,7 @@ export const state = {
 
 export const getters = {
   portfolioStock(state, getters) {
+    if(state.stock)
     return portfolioArrayGenerator(getters.getOffers, Object.keys(state.stock).map(item => state.stock[item]));
   },
 
@@ -67,31 +88,35 @@ export const mutations =  {
     state.count = count
   },
 
-  [BUE_PORTFOLIO_ITEM](state, {count, id, price}) {
-
+  [BUE_PORTFOLIO_ITEM](state, {currentPortfolioItemKey, count, price}) {
+    state.stock[currentPortfolioItemKey].count = count;
+    state.stock[currentPortfolioItemKey].price = price;
   },
 
-  [SELL_PORTFOLIO_ITEM](state, {item, sellItemCount}) {
-
+  [SELL_PORTFOLIO_ITEM](state, {currentPortfolioItemKey, sellItemCount}) {
+    state.stock[currentPortfolioItemKey].count -= sellItemCount;
   },
 
-  'SET_PORTFOLIO_ITEM' (state, {count, eventType, name, price}) {
-    if (eventType === 'sell') {
-      const item = state.stock.find(item => item.name === name)
-      item.count -= Number(count)
-      if (item.count < 1) state.stock.splice(state.stock.indexOf(item), 1)
-    }
-    if (eventType === 'buy') {
+  [REMOVE_PORTFOLIO_ITEM](state, currentPortfolioItemKey) {
+    console.log('REMOVE MUTATION TRIGGER', currentPortfolioItemKey)
+    console.log('REMOVE MUTATION TRIGGER state', state.stock)
+    console.log('why you here?', state.stock[currentPortfolioItemKey])
 
-    }
+    delete state.stock[currentPortfolioItemKey]
+
+
+    //проблема корее всего из-за мутабельности объекта, попробовать задавать новый объект
+
+    console.log('why you here22', state.stock)
   }
 };
 
 export const actions = {
   [FETCH_PORTFOLIO]({commit, state, rootState}) {
     try {
-      fb.database().ref(`users/${rootState.auth.uid}`).on('value', (snapShot) => {
+      fb.database().ref(`users/${rootState.auth.uid}`).once('value', (snapShot) => {
         const { stock, history, count } = snapShot.val();
+
         commit(SET_PORTFOLIO_STOCK, stock)
         commit(SET_PORTFOLIO_HISTORY, history)
         commit(SET_PORTFOLIO_COUNT, count)
@@ -105,19 +130,36 @@ export const actions = {
     }
   },
 
+  [SET_PORTFOLIO_HISTORY]({commit, state, rootState}, item) {
 
-  async [BUE_PORTFOLIO_ITEM]({commit, state, rootState}, {count, data:{id}}) {
+    console.log('HISTORY TRIGGER')
 
+    try {
+      const historyFetchAnswer = fb.database().ref(`users/${rootState.auth.uid}/history`).push(item);
+
+      console.log('historyFetchAnswer--', historyFetchAnswer)
+
+    } catch (error) {
+      commit(SET_LOAD, false)
+      console.log(error)
+    }
+  },
+
+
+  async [BUE_PORTFOLIO_ITEM]({dispatch, commit, state, rootState}, {count, data}) {
     commit(SET_LOAD, true)
-    const findItemFunction = (stock, id) => {
-      for (item in stock) {
-        if (item => item.id === id) return item;
-      }
-      return null;
-    };
-    const currentItem = findItemFunction(state.stock, id);
 
-    console.log('currentItem', currentItem)
+    const {id, price} = data;
+
+    const currentPortfolioItemKey = (() => {
+      const stock = state.stock;
+      for (let key in stock) {
+        if (stock[key].id === id) return key
+      }
+    })();
+
+    const newProfileCount = state.count - count * price;
+    const currentItem = state.stock[currentPortfolioItemKey]
 
     if(currentItem) {
       const newItem = Object.assign({}, currentItem);
@@ -125,16 +167,29 @@ export const actions = {
         (currentItem.price * currentItem.count + Number(price) * Number(count))/(currentItem.count + Number(count)))
       newItem.count += Number(count)
 
-      // await fb.database().ref('offers').set(prices);
-      commit(SET_LOAD, false)
+      try {
+        await fb.database().ref(`users/${rootState.auth.uid}/stock/${currentPortfolioItemKey}`).set(newItem);
+        await fb.database().ref(`users/${rootState.auth.uid}/count`).set(newProfileCount);
+
+        commit(BUE_PORTFOLIO_ITEM, {currentPortfolioItemKey, count: newItem.count, price: newItem.price});
+        commit(SET_PORTFOLIO_COUNT, newProfileCount);
+        await dispatch(SET_PORTFOLIO_HISTORY, new createHistoryBuyItem(data, count));
+        commit(SET_LOAD, false)
+      } catch (error) {
+        commit(SET_LOAD, false)
+        console.log(error)
+      }
     } else {
 
       try {
-        const request = await fb.database().ref(`users/${rootState.auth.uid}/stock`).push({
+        await fb.database().ref(`users/${rootState.auth.uid}/stock`).push({
           id,
           count: Number(count),
           price: Number(price)
         });
+
+        await dispatch(FETCH_PORTFOLIO)
+        await dispatch(SET_PORTFOLIO_HISTORY, new createHistoryBuyItem(data, count));
         commit(SET_LOAD, false)
       } catch (error) {
         commit(SET_LOAD, false)
@@ -145,20 +200,47 @@ export const actions = {
     }
   },
 
-  [SELL_PORTFOLIO_ITEM]({commit, state, rootState}, {item, sellItemCount}) {
+  async [SELL_PORTFOLIO_ITEM]({dispatch, commit, state, rootState}, {item, sellItemCount}) {
 
-    if(Number(count) > state.stock.find(item => item.name === name).count) return
-    const currentPrice = rootState.stocks.offers.find(item => item.name === name).price
-    commit('setTotalCounter', {
-      price: currentPrice,
-      count,
-      eventType})
-    commit('SET_PORTFOLIO_ITEM', {
-      count,
-      eventType,
-      name,
-      price: currentPrice
-    })
+    const {id, count, currentPrice} = item;
+
+    const newProfileCount = state.count + sellItemCount * currentPrice;
+    const currentPortfolioItemKey = (() => {
+      const stock = state.stock;
+      for (let key in stock) {
+        if (stock[key].id === id) return key
+      }
+    })();
+
+    if(sellItemCount < count) {
+      try {
+        await fb.database().ref(`users/${rootState.auth.uid}/stock/${currentPortfolioItemKey}/count`).set(count - sellItemCount);
+        await fb.database().ref(`users/${rootState.auth.uid}/count`).set(newProfileCount);
+
+        commit(SELL_PORTFOLIO_ITEM, {currentPortfolioItemKey, sellItemCount});
+        await dispatch(SET_PORTFOLIO_HISTORY, new createHistorySellItem(item, sellItemCount));
+        commit(SET_PORTFOLIO_COUNT, newProfileCount);
+
+        commit(SET_LOAD, false)
+      } catch (error) {
+        commit(SET_LOAD, false)
+        console.log(error)
+      }
+    } else {
+      try {
+        console.log('REMOVE TRIGGER')
+        await fb.database().ref(`users/${rootState.auth.uid}/stock/${currentPortfolioItemKey}`).remove();
+        await fb.database().ref(`users/${rootState.auth.uid}/count`).set(newProfileCount);
+
+        commit(REMOVE_PORTFOLIO_ITEM, currentPortfolioItemKey);
+        commit(SET_PORTFOLIO_COUNT, newProfileCount);
+        await dispatch(SET_PORTFOLIO_HISTORY, new createHistorySellItem(item, sellItemCount));
+        commit(SET_LOAD, false)
+      } catch (error) {
+        commit(SET_LOAD, false)
+        console.log(error)
+      }
+    }
   }
 };
 

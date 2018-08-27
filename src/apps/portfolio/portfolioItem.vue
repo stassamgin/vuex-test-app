@@ -25,7 +25,7 @@
       <v-card-actions class="action">
         <v-btn
           color="secondary"
-          :disabled="count > data.count"
+          :disabled="count > data.count || !count"
           @click.number="handleClick"
         > Sell Now
         </v-btn>
@@ -52,7 +52,7 @@
     },
     methods: {
       handleClick() {
-        this.$store.dispatch(SELL_PORTFOLIO_ITEM, {data: this.data, sellItemCount: this.count} );
+        this.$store.dispatch(SELL_PORTFOLIO_ITEM, {item: this.data, sellItemCount: this.count} );
         this.count = ''
       }
     }
