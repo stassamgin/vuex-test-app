@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "concurrently \"cross-env NODE_ENV=development webpack-dev-server --open --hot\" \"json-server --watch fake-db.json\"",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {

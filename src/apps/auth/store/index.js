@@ -42,10 +42,11 @@ export const actions = {
 
     try {
       const request = await fb.auth().createUserWithEmailAndPassword(email, password)
-        commit(SET_LOAD, false)
-        commit(SHOW_MODAL, false)
-        //TODO: logic of add count to new user
-        commit(LOGIN_USER, request.user.uid)
+
+      await fb.database().ref(`users/${request.user.uid}/count`).set(10000);
+      commit(LOGIN_USER, request.user.uid)
+      commit(SHOW_MODAL, false)
+      commit(SET_LOAD, false)
     } catch (error) {
       commit(SET_LOAD, false)
       throw error
@@ -57,10 +58,9 @@ export const actions = {
 
     try {
         const request = await fb.auth().signInWithEmailAndPassword(email, password)
-        commit(SET_LOAD, false)
         commit(SHOW_MODAL, false)
         commit(LOGIN_USER, request.user.uid)
-        //commit(FETCH_PORTFOLIO, payload)
+        commit(SET_LOAD, false)
     } catch (error) {
         commit(SET_LOAD, false)
         throw error

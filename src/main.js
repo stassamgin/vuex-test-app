@@ -9,7 +9,7 @@ import colors from 'vuetify/es5/util/colors'
 import 'vuetify/dist/vuetify.min.css'
 
 import store from "./store";
-import router from './routes'
+import router from './router/routes'
 import App from './App.vue'
 
 Vue.use(VueRouter)
@@ -21,12 +21,6 @@ Vue.use(Vuetify, {
   }
 })
 Vue.use(Meta)
-
-
-
-
-//Vue.http.options.root = 'https://vue-test-project-d0932.firebaseio.com/';
-//Vue.http.options.root = 'http://localhost:3000';
 
 new Vue({
   el: '#app',

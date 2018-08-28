@@ -67,11 +67,6 @@
     computed: {
       ...mapGetters(['isAuth', 'portfolioCount']),
     },
-    watch: {
-      portfolioCount(val) {
-        console.log('portfolioCount--', val);
-      }
-    },
     methods: {
       ...mapActions({
         endDay: 'randomPriseGenerateAction',

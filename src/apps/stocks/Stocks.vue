@@ -22,7 +22,7 @@
     },
     computed: {
       ...mapGetters(['getOffers']),
-    },
+    }
   }
 </script>
 
