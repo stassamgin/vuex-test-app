@@ -79,11 +79,9 @@ export const mutations =  {
 
   [SET_PORTFOLIO_HISTORY](state, history) {
     if (state.history) {
-      console.log('TRIGGER 1')
       const {key, item} = history;
       state.history = Object.assign({}, state.history, {[key]: item})
     } else {
-      console.log('TRIGGER 2')
       state.history = history
     }
   },

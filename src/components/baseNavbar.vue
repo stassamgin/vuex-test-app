@@ -1,8 +1,13 @@
 <template>
   <v-toolbar app>
-    <v-layout class="navbar" justify-space-between align-center>
+    <v-layout
+      class="navbar"
+      justify-space-between
+      align-center>
       <div class="logo-block">
-        <router-link tag="div" to="/">
+        <router-link
+          tag="div"
+          to="/">
           <div class="logo">
             <img src="@/assets/logo.png">
             <span>- stock</span>
@@ -17,38 +22,48 @@
           End Day
         </v-btn>
       </div>
-      <div class="data" v-if="!isAuth">
-          <v-btn
-            @click="SHOW_MODAL(true)"
-            color="primary"          >
-            <v-icon left>person</v-icon>
-            Login
-          </v-btn>
+      <div
+        v-if="!isAuth"
+        class="data">
+        <v-btn
+          color="primary"
+          @click="SHOW_MODAL(true)" >
+          <v-icon left>person</v-icon>
+          Login
+        </v-btn>
       </div>
-      <div class="data" v-else>
+      <div
+        v-else
+        class="data">
         <nav class="nav">
-          <router-link tag="v-btn" to="/portfolio">Portfolio</router-link>
-          <router-link tag="v-btn" to="/history">History</router-link>
+          <router-link
+            tag="v-btn"
+            to="/portfolio">Portfolio</router-link>
+          <router-link
+            tag="v-btn"
+            to="/history">History</router-link>
         </nav>
         <v-menu offset-y>
           <v-btn slot="activator">Save & Load</v-btn>
           <v-list>
-            <v-list-tile @click="">
+            <v-list-tile @click="{}">
               <v-list-tile-title>Save Data</v-list-tile-title>
             </v-list-tile>
-            <v-list-tile @click="">
+            <v-list-tile @click="{}">
               <v-list-tile-title>Load Data</v-list-tile-title>
             </v-list-tile>
           </v-list>
         </v-menu>
         <v-btn
-            @click="logoutHandler"
-            color="primary"          >
+          color="primary"
+          @click="logoutHandler" >
           <v-icon left>input</v-icon>
           Logout
         </v-btn>
-        <div v-if="portfolioCount" class="counter">
-          Funds: {{portfolioCount}} $
+        <div
+          v-if="portfolioCount"
+          class="counter">
+          Funds: {{ portfolioCount }} $
         </div>
       </div>
     </v-layout>
@@ -56,32 +71,31 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters, mapMutations } from 'vuex';
-  import { LOGOUT_USER } from '@/apps/auth/store/types';
-  import {
-    SHOW_MODAL
-  } from '@/store/types';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
+import { LOGOUT_USER } from '@/apps/auth/store/types';
+import {
+  SHOW_MODAL,
+} from '@/store/types';
 
-  export default {
-    name: "baseNavbar",
-    computed: {
-      ...mapGetters(['isAuth', 'portfolioCount']),
+export default {
+  name: 'BaseNavbar',
+  computed: {
+    ...mapGetters(['isAuth', 'portfolioCount']),
+  },
+  methods: {
+    ...mapActions({
+      endDay: 'randomPriseGenerateAction',
+    }),
+    ...mapMutations([SHOW_MODAL, LOGOUT_USER]),
+    logoutHandler() {
+      this.$router.push('/');
+      this.LOGOUT_USER();
     },
-    methods: {
-      ...mapActions({
-        endDay: 'randomPriseGenerateAction',
-      }),
-      ...mapMutations([SHOW_MODAL, LOGOUT_USER]),
-      logoutHandler() {
-        this.$router.push('/');
-        this.LOGOUT_USER();
-      },
-    },
-  }
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-
 .navbar {
   padding: 0 30px;
   min-width: 100px;

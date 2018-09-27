@@ -5,30 +5,30 @@
 </template>
 
 <script>
-  import { mapMutations } from 'vuex';
-  import Stocks from '@/apps/stocks/Stocks'
-  import {
-    SHOW_MODAL
-  } from '@/store/types';
+import { mapMutations } from 'vuex';
+import Stocks from '@/apps/stocks/Stocks';
+import {
+  SHOW_MODAL,
+} from '@/store/types';
 
-  export default {
-    name: "home",
-    metaInfo: {
-      title: 'v-stock - Home',
-    },
-    components: {
-      appStocks: Stocks,
-    },
-    methods: {
-      ...mapMutations([SHOW_MODAL]),
-    },
-    created() {
-      if(this.$route.query.showLogin) {
-        this.$router.push('/')
-        this.SHOW_MODAL(true)
-      }
+export default {
+  name: 'Home',
+  metaInfo: {
+    title: 'v-stock - Home',
+  },
+  components: {
+    appStocks: Stocks,
+  },
+  methods: {
+    ...mapMutations([SHOW_MODAL]),
+  },
+  created() {
+    if (this.$route.query.showLogin) {
+      this.$router.push('/');
+      this.SHOW_MODAL(true);
     }
-  }
+  },
+};
 </script>
 
 <style scoped>

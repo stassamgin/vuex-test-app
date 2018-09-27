@@ -1,69 +1,63 @@
 <template>
-    <v-layout column class="item">
-        <v-toolbar color="primary"  dark>
-            <v-toolbar-title>
-                {{data.name}}
-                <span class="price">
-                  {{data.price}}
-                </span>
-            </v-toolbar-title>
-        </v-toolbar>
-        <v-card>
-            <div class="input">
-                <v-text-field
-                    v-model.number="itemCounter"
-                    type="number"
-                    label="Quantity"
-                >
-                </v-text-field>
-            </div>
-            <v-card-actions class="action">
-                <v-btn
-                    color="primary"
-                    :disabled="!(isAuth && itemCounter && portfolioCount > itemCounter * data.price)"
-                    @click.number="handleClick"
-                > Buy now
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-layout>
+  <v-layout
+    column
+    class="item">
+    <v-toolbar
+      color="primary"
+      dark>
+      <v-toolbar-title>
+        {{ data.name }}
+        <span class="price">
+          {{ data.price }}
+        </span>
+      </v-toolbar-title>
+    </v-toolbar>
+    <v-card>
+      <div class="input">
+        <v-text-field
+          v-model.number="itemCounter"
+          type="number"
+          label="Quantity" />
+      </div>
+      <v-card-actions class="action">
+        <v-btn
+          :disabled="!(isAuth && itemCounter && portfolioCount > itemCounter * data.price)"
+          color="primary"
+          @click="handleClick">
+          Buy now
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-layout>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 
-  import {
-    BUE_PORTFOLIO_ITEM,
-    BUE_PORTFOLIO_EXIST_ITEM,
-    BUE_PORTFOLIO_CREATE_ITEM,
-    SELL_PORTFOLIO_ITEM,
-    SET_PORTFOLIO_STOCK,
-    SET_PORTFOLIO_HISTORY,
-    SET_PORTFOLIO_COUNT,
-    FETCH_PORTFOLIO,
-    SET_PORTFOLIO,
-  } from '@/apps/portfolio/store/types';
+import {
+  BUE_PORTFOLIO_ITEM,
+} from '@/apps/portfolio/store/types';
 
-  export default {
-    name: "stock-item",
-    props: {
-      data: Object,
+export default {
+  name: 'StockItem',
+  props: {
+    data: Object,
+  },
+  data() {
+    return {
+      itemCounter: null,
+    };
+  },
+  computed: {
+    ...mapGetters(['portfolioCount', 'isAuth']),
+  },
+  methods: {
+    handleClick() {
+      this.$store.dispatch(BUE_PORTFOLIO_ITEM, { count: this.itemCounter, data: this.data });
+      this.itemCounter = '';
     },
-    data() {
-      return {
-        itemCounter: null,
-      }
-    },
-    computed: {
-      ...mapGetters(['portfolioCount', 'isAuth']),
-    },
-    methods: {
-      handleClick() {
-        this.$store.dispatch(BUE_PORTFOLIO_ITEM, { count: this.itemCounter, data: this.data })
-        this.itemCounter = ''
-      }
-    }
-  }
+  },
+};
 </script>
 
 <style scoped>
